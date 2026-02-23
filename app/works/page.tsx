@@ -8,10 +8,10 @@ export default function WorksPage() {
   return (
     <main>
       <div className="card">
-        <div className="pill">GPA Engine</div>
-        <h1 className="title">Works</h1>
+        <div className="pill">Motor GPA</div>
+        <h1 className="title">Trabajo</h1>
         <p className="subtitle">
-          Control the semester model, parse grading rules, and simulate GPA outcomes in real time.
+          Controla el semestre, parsea reglas y simula el GPA en tiempo real.
         </p>
       </div>
       <div className="grid">

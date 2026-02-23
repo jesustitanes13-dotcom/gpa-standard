@@ -1,8 +1,9 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { defaultState } from "@/src/lib/defaultState";
 import { DisciplineState } from "@/src/lib/types";
+import { getSupabaseBrowser } from "@/src/lib/supabaseBrowser";
 
 type StateContextValue = {
   state: DisciplineState;
@@ -13,10 +14,12 @@ type StateContextValue = {
 const StateContext = createContext<StateContextValue | undefined>(undefined);
 
 const LOCAL_KEY = "discipline_os_state";
+const OWNER_ID = process.env.NEXT_PUBLIC_DISCIPLINE_OS_OWNER_ID ?? "default";
 
 export const StateProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, setState] = useState<DisciplineState>(defaultState);
   const [hydrated, setHydrated] = useState(false);
+  const lastSynced = useRef<string>("");
 
   useEffect(() => {
     const cached = typeof window !== "undefined" ? localStorage.getItem(LOCAL_KEY) : null;
@@ -33,6 +36,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
       .then((payload) => {
         if (payload?.state) {
           setState(payload.state as DisciplineState);
+          lastSynced.current = JSON.stringify(payload.state);
         }
       })
       .catch(() => null)
@@ -45,6 +49,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
+    lastSynced.current = JSON.stringify(state);
     const timeout = window.setTimeout(() => {
       fetch("/api/state", {
         method: "POST",
@@ -55,6 +60,37 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => window.clearTimeout(timeout);
   }, [state, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
+
+    const channel = supabase
+      .channel(`discipline_os_state:${OWNER_ID}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "discipline_os_state",
+          filter: `owner_id=eq.${OWNER_ID}`
+        },
+        (payload) => {
+          const nextState = (payload.new as { state?: DisciplineState } | null)?.state;
+          if (!nextState) return;
+          const serialized = JSON.stringify(nextState);
+          if (serialized === lastSynced.current) return;
+          lastSynced.current = serialized;
+          setState(nextState);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [hydrated]);
 
   const updateState = useCallback((partial: Partial<DisciplineState>) => {
     setState((prev) => ({

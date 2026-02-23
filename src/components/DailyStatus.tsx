@@ -17,10 +17,10 @@ export const DailyStatus = () => {
   }, [state.graduationDate]);
 
   return (
-    <div className="card">
-      <div className="pill">Mission Control</div>
+    <div className="card glow-active">
+      <div className="pill">Mision Central</div>
       <h1 className="title">Epa, {state.greetingName}!</h1>
-      <p className="subtitle">Countdown to Graduation: {countdown} days</p>
+      <p className="subtitle">Cuenta regresiva a graduacion: {countdown} dias</p>
     </div>
   );
 };

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDisciplineState } from "@/src/components/StateProvider";
+import { isLikelySpanish } from "@/src/lib/languageGuard";
 
 export const ExamManager = () => {
   const { state, setState } = useDisciplineState();
@@ -9,9 +10,14 @@ export const ExamManager = () => {
   const [title, setTitle] = useState("Midterm");
   const [date, setDate] = useState("");
   const [weight, setWeight] = useState(25);
+  const [warning, setWarning] = useState("");
 
   const addExam = () => {
     if (!subjectId || !date) return;
+    if (isLikelySpanish(title)) {
+      setWarning("Senior Partner: You must write in English to save.");
+      return;
+    }
     const newExam = {
       id: `exam-${Date.now()}`,
       subjectId,
@@ -23,6 +29,7 @@ export const ExamManager = () => {
       ...prev,
       exams: [newExam, ...prev.exams]
     }));
+    setWarning("");
   };
 
   const removeExam = (id: string) => {
@@ -34,8 +41,8 @@ export const ExamManager = () => {
 
   return (
     <div className="card">
-      <div className="pill">Exam Mode Intel</div>
-      <h3 className="title">Upcoming Deadlines</h3>
+      <div className="pill">Radar de Examenes</div>
+      <h3 className="title">Fechas Proximas</h3>
       <div className="grid grid-2">
         <select className="select" value={subjectId} onChange={(event) => setSubjectId(event.target.value)}>
           {state.subjects.map((subject) => (
@@ -44,7 +51,14 @@ export const ExamManager = () => {
             </option>
           ))}
         </select>
-        <input className="input" value={title} onChange={(event) => setTitle(event.target.value)} />
+        <input
+          className="input"
+          value={title}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            setWarning("");
+          }}
+        />
         <input className="input" type="date" value={date} onChange={(event) => setDate(event.target.value)} />
         <input
           className="input"
@@ -55,7 +69,7 @@ export const ExamManager = () => {
           onChange={(event) => setWeight(Number(event.target.value))}
         />
         <button className="button" type="button" onClick={addExam}>
-          Add Exam
+          Agregar examen
         </button>
       </div>
       <div className="grid" style={{ marginTop: 16 }}>
@@ -65,12 +79,13 @@ export const ExamManager = () => {
             <div key={exam.id} className="badge">
               {subject?.code ?? "SUB"} · {exam.title} · {exam.date} · {exam.weight}%
               <button className="button secondary" type="button" onClick={() => removeExam(exam.id)}>
-                Remove
+                Quitar
               </button>
             </div>
           );
         })}
       </div>
+      {warning ? <p className="subtitle">{warning}</p> : null}
     </div>
   );
 };

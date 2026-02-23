@@ -2,15 +2,14 @@ export const SeniorPartnerDashboard = () => {
   return (
     <div className="card">
       <div className="pill">Senior Partner</div>
-      <h3 className="title">Analytical Feedback</h3>
+      <h3 className="title">Feedback Analitico</h3>
       <p className="subtitle">
-        Maintain measurable momentum. Optimize study blocks by aligning high-cognitive tasks with your peak energy
-        windows.
+        Mantén el impulso medible. Optimiza bloques de estudio alineando tareas cognitivas con tus picos de energia.
       </p>
       <div className="grid">
-        <div className="badge">Quantify outcomes: log focused minutes daily.</div>
-        <div className="badge">Aim for 2 deep-work blocks before noon.</div>
-        <div className="badge">Review 24h + 7d after every lecture.</div>
+        <div className="badge">Cuantifica resultados: registra minutos enfocados diarios.</div>
+        <div className="badge">Apunta a 2 bloques de trabajo profundo antes del mediodia.</div>
+        <div className="badge">Revisa a las 24h + 7d despues de cada clase.</div>
       </div>
     </div>
   );

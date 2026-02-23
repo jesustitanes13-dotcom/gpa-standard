@@ -5,52 +5,95 @@ import { useDisciplineState } from "@/src/components/StateProvider";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
+const Circle = ({ progress }: { progress: number }) => {
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - progress * circumference;
+
+  return (
+    <svg width="110" height="110">
+      <circle cx="55" cy="55" r={radius} stroke="rgba(255,255,255,0.12)" strokeWidth="10" fill="none" />
+      <circle
+        cx="55"
+        cy="55"
+        r={radius}
+        stroke="url(#gpaGradient)"
+        strokeWidth="10"
+        fill="none"
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+      />
+      <defs>
+        <linearGradient id="gpaGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#1e78ff" />
+          <stop offset="100%" stopColor="#8b5cf6" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+};
+
 export const GpaSimulator = () => {
   const { state } = useDisciplineState();
-  const [grades, setGrades] = useState<Record<string, number>>({});
+  const [currentGpa, setCurrentGpa] = useState(3.45);
 
-  const simulatedGpa = useMemo(() => {
-    const totalCredits = state.subjects.reduce((sum, subject) => sum + subject.credits, 0);
-    if (!totalCredits) return 0;
+  const totalCredits = useMemo(
+    () => state.subjects.reduce((sum, subject) => sum + subject.credits, 0),
+    [state.subjects]
+  );
 
-    const totalPoints = state.subjects.reduce((sum, subject) => {
-      const grade = grades[subject.id] ?? 3.5;
-      return sum + grade * subject.credits;
-    }, 0);
+  const nextExam = useMemo(() => {
+    const sorted = [...state.exams].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    return sorted[0];
+  }, [state.exams]);
 
-    return totalPoints / totalCredits;
-  }, [grades, state.subjects]);
+  const whatIfGpa = useMemo(() => {
+    if (!nextExam || totalCredits === 0) return currentGpa;
+    const subject = state.subjects.find((item) => item.id === nextExam.subjectId);
+    const credits = subject?.credits ?? 3;
+    return clamp((currentGpa * totalCredits + 4.0 * credits) / (totalCredits + credits), 0, 4);
+  }, [currentGpa, nextExam, state.subjects, totalCredits]);
+
+  const progress = clamp(currentGpa / state.gpaTarget, 0, 1);
 
   return (
     <div className="card">
-      <div className="pill">GPA Simulator</div>
-      <h3 className="title">Live What-If Engine</h3>
-      <p className="subtitle">Adjust expected grades to see the GPA trajectory.</p>
-      <div className="grid">
-        {state.subjects.map((subject) => (
-          <div key={subject.id} className="grid grid-2">
-            <div className="badge">
-              {subject.code} · {subject.name}
+      <div className="pill">GPA</div>
+      <h3 className="title">Panel de GPA</h3>
+      <p className="subtitle">Visualiza tu progreso hacia la meta y simula el proximo examen.</p>
+
+      <div className="grid grid-2" style={{ alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <Circle progress={progress} />
+          <div>
+            <div className="badge">GPA Actual: {currentGpa.toFixed(2)}</div>
+            <div className="badge" style={{ marginTop: 6 }}>
+              Meta GPA: {state.gpaTarget.toFixed(2)}
             </div>
-            <input
-              className="input"
-              type="number"
-              min={0}
-              max={4}
-              step={0.1}
-              value={grades[subject.id] ?? 3.5}
-              onChange={(event) =>
-                setGrades((prev) => ({
-                  ...prev,
-                  [subject.id]: clamp(Number(event.target.value), 0, 4)
-                }))
-              }
-            />
           </div>
-        ))}
+        </div>
+        <div className="grid">
+          <label className="subtitle">Ajusta tu GPA actual</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            max={4}
+            step={0.01}
+            value={currentGpa}
+            onChange={(event) => setCurrentGpa(clamp(Number(event.target.value), 0, 4))}
+          />
+        </div>
       </div>
-      <div className="badge" style={{ marginTop: 16 }}>
-        Simulated GPA: {simulatedGpa.toFixed(2)} · Target {state.gpaTarget.toFixed(2)}
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <div className="pill">What-if</div>
+        <p className="subtitle">
+          Si saco una A en mi proximo examen, mi GPA sube a {whatIfGpa.toFixed(2)}.
+        </p>
       </div>
     </div>
   );

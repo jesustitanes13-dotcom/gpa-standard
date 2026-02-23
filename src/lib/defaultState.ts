@@ -11,37 +11,37 @@ export const defaultState: DisciplineState = {
   schedule: [
     {
       id: "slot-1",
-      day: "Monday",
+      day: "Lunes",
       start: "08:00",
       end: "10:00",
-      label: "Algorithms"
+      label: "Algoritmos"
     },
     {
       id: "slot-2",
-      day: "Monday",
+      day: "Lunes",
       start: "14:00",
       end: "16:00",
-      label: "AI Systems Lab"
+      label: "Laboratorio de IA"
     },
     {
       id: "slot-3",
-      day: "Wednesday",
+      day: "Miercoles",
       start: "09:00",
       end: "11:00",
-      label: "Data Structures"
+      label: "Estructuras de Datos"
     }
   ],
   subjects: [
     {
       id: "sub-1",
-      name: "Algorithms",
+      name: "Algoritmos",
       code: "CS401",
       credits: 4,
       instructor: "Dr. Vega"
     },
     {
       id: "sub-2",
-      name: "AI Systems Lab",
+      name: "Laboratorio de IA",
       code: "AI330",
       credits: 3,
       instructor: "Prof. Rivera"
@@ -51,21 +51,21 @@ export const defaultState: DisciplineState = {
     {
       id: "exam-1",
       subjectId: "sub-1",
-      title: "Midterm",
+      title: "Parcial",
       date: "2026-03-15",
       weight: 30
     },
     {
       id: "exam-2",
       subjectId: "sub-2",
-      title: "Project Review",
+      title: "Revision de Proyecto",
       date: "2026-03-22",
       weight: 25
     }
   ],
   gpaTarget: 3.9,
   historyLog: [
-    "Locked 2 study sessions with 90+ minutes.",
-    "Gym streak: 4 days in a row."
+    "Bloque de estudio profundo completado.",
+    "Racha de gym: 4 dias seguidos."
   ]
 };

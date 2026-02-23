@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { isLikelySpanish } from "@/src/lib/languageGuard";
 
 type ParsedRule = {
   label: string;
@@ -21,29 +22,36 @@ const parseRules = (input: string): ParsedRule[] => {
 export const SyllabusParser = () => {
   const [rawText, setRawText] = useState("");
   const [rules, setRules] = useState<ParsedRule[]>([]);
+  const [warning, setWarning] = useState("");
 
   const handleParse = () => {
     if (!rawText.trim()) return;
+    if (isLikelySpanish(rawText)) {
+      setWarning("Senior Partner: You must write in English to save.");
+      return;
+    }
     setRules(parseRules(rawText));
+    setWarning("");
   };
 
   return (
     <div className="card">
-      <div className="pill">AI Syllabus Parser</div>
-      <h3 className="title">Weights & Rules Extractor</h3>
-      <p className="subtitle">
-        Upload text or paste a grading policy. The parser will extract weight cues for GPA modeling.
-      </p>
+      <div className="pill">Parser de Silabo</div>
+      <h3 className="title">Extractor de Pesos</h3>
+      <p className="subtitle">Pega el plan de evaluacion. El parser extrae pesos para el GPA.</p>
       <textarea
         className="textarea"
         rows={6}
-        placeholder="Paste syllabus grading text here..."
+        placeholder="Pega el texto del silabo aqui..."
         value={rawText}
-        onChange={(event) => setRawText(event.target.value)}
+        onChange={(event) => {
+          setRawText(event.target.value);
+          setWarning("");
+        }}
       />
       <div className="button-row" style={{ marginTop: 12 }}>
         <button className="button" type="button" onClick={handleParse}>
-          Parse Syllabus
+          Analizar
         </button>
       </div>
       {rules.length > 0 && (
@@ -55,6 +63,7 @@ export const SyllabusParser = () => {
           ))}
         </div>
       )}
+      {warning ? <p className="subtitle">{warning}</p> : null}
     </div>
   );
 };

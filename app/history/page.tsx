@@ -4,9 +4,9 @@ export default function HistoryPage() {
   return (
     <main>
       <div className="card">
-        <div className="pill">Timeline</div>
-        <h1 className="title">History</h1>
-        <p className="subtitle">Track discipline wins and lessons learned.</p>
+        <div className="pill">Linea de Tiempo</div>
+        <h1 className="title">Historial</h1>
+        <p className="subtitle">Registra avances y lecciones de disciplina.</p>
       </div>
       <div className="grid">
         <HistoryTimeline />

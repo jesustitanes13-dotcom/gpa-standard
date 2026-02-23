@@ -7,10 +7,10 @@ export const ExamModeToggle = () => {
 
   return (
     <div className={`card ${state.examMode ? "exam-glow" : ""}`}>
-      <div className="pill">Exam Mode</div>
-      <h3 className="title">Focus Protocol</h3>
+      <div className="pill">Modo Examen</div>
+      <h3 className="title">Protocolo de Enfoque</h3>
       <p className="subtitle">
-        When enabled, the UI shifts to priority mode and filters attention to imminent deadlines.
+        Al activar, la interfaz entra en prioridad y filtra lo urgente.
       </p>
       <div className="button-row">
         <button
@@ -18,7 +18,7 @@ export const ExamModeToggle = () => {
           onClick={() => updateState({ examMode: !state.examMode })}
           type="button"
         >
-          {state.examMode ? "Disable Exam Mode" : "Activate Exam Mode"}
+          {state.examMode ? "Desactivar Modo Examen" : "Activar Modo Examen"}
         </button>
       </div>
     </div>

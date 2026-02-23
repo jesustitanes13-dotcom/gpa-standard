@@ -5,7 +5,7 @@ import { AppShell } from "@/src/components/AppShell";
 
 export const metadata: Metadata = {
   title: "Academic Discipline OS",
-  description: "Mission control for academic performance."
+  description: "Centro de control para disciplina academica."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useDisciplineState } from "@/src/components/StateProvider";
 
-const formatDate = (date: Date) => date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+const formatDate = (date: Date) => date.toLocaleDateString("es-ES", { month: "short", day: "numeric" });
 
 export const ExamPrepRoadmap = () => {
   const { state } = useDisciplineState();
@@ -22,10 +22,10 @@ export const ExamPrepRoadmap = () => {
     const days = Array.from({ length: 7 }).map((_, index) => {
       const day = new Date();
       day.setDate(day.getDate() + index);
-      const focus = index < 3 ? "Core concepts" : index < 5 ? "Practice sets" : "Mock review";
+      const focus = index < 3 ? "Conceptos base" : index < 5 ? "Practica guiada" : "Simulacro";
       return {
         date: formatDate(day),
-        focus: `${focus} for ${subject?.name ?? "exam"}`
+        focus: `${focus} para ${subject?.name ?? "examen"}`
       };
     });
 
@@ -34,10 +34,10 @@ export const ExamPrepRoadmap = () => {
 
   return (
     <div className="card">
-      <div className="pill">Exam Prep Roadmap</div>
-      <h3 className="title">7-Day Study Plan</h3>
+      <div className="pill">Ruta de Examen</div>
+      <h3 className="title">Plan de 7 Dias</h3>
       {roadmap.length === 0 ? (
-        <p className="subtitle">No upcoming exams found. Add an exam to generate a plan.</p>
+        <p className="subtitle">No hay examenes proximos. Agrega uno para generar el plan.</p>
       ) : (
         <div className="grid">
           {roadmap.map((day) => (

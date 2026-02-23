@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useDisciplineState } from "@/src/components/StateProvider";
+import { isLikelySpanish } from "@/src/lib/languageGuard";
 
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const days = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
 
 export const SemesterManager = () => {
   const { state, setState } = useDisciplineState();
@@ -14,9 +15,15 @@ export const SemesterManager = () => {
   const [slotDay, setSlotDay] = useState(days[0]);
   const [slotStart, setSlotStart] = useState("08:00");
   const [slotEnd, setSlotEnd] = useState("09:00");
+  const [subjectWarning, setSubjectWarning] = useState("");
+  const [slotWarning, setSlotWarning] = useState("");
 
   const addSubject = () => {
     if (!subjectName.trim()) return;
+    if (isLikelySpanish(subjectName)) {
+      setSubjectWarning("Senior Partner: You must write in English to save.");
+      return;
+    }
     const newSubject = {
       id: `sub-${Date.now()}`,
       name: subjectName.trim(),
@@ -30,6 +37,7 @@ export const SemesterManager = () => {
     setSubjectName("");
     setSubjectCode("");
     setCredits(3);
+    setSubjectWarning("");
   };
 
   const removeSubject = (id: string) => {
@@ -42,6 +50,10 @@ export const SemesterManager = () => {
 
   const addSlot = () => {
     if (!slotLabel.trim()) return;
+    if (isLikelySpanish(slotLabel)) {
+      setSlotWarning("Senior Partner: You must write in English to save.");
+      return;
+    }
     const newSlot = {
       id: `slot-${Date.now()}`,
       day: slotDay,
@@ -54,6 +66,7 @@ export const SemesterManager = () => {
       schedule: [newSlot, ...prev.schedule]
     }));
     setSlotLabel("");
+    setSlotWarning("");
   };
 
   const removeSlot = (id: string) => {
@@ -65,20 +78,23 @@ export const SemesterManager = () => {
 
   return (
     <div className="card">
-      <div className="pill">Semester Manager</div>
-      <h3 className="title">Subjects & Schedule</h3>
+      <div className="pill">Gestor del Semestre</div>
+      <h3 className="title">Materias y Horario</h3>
 
       <div className="grid">
         <div className="grid grid-2">
           <input
             className="input"
-            placeholder="Subject name"
+            placeholder="Nombre de la materia"
             value={subjectName}
-            onChange={(event) => setSubjectName(event.target.value)}
+            onChange={(event) => {
+              setSubjectName(event.target.value);
+              setSubjectWarning("");
+            }}
           />
           <input
             className="input"
-            placeholder="Code"
+            placeholder="Codigo"
             value={subjectCode}
             onChange={(event) => setSubjectCode(event.target.value)}
           />
@@ -91,16 +107,20 @@ export const SemesterManager = () => {
             onChange={(event) => setCredits(Number(event.target.value))}
           />
           <button className="button" type="button" onClick={addSubject}>
-            Add Subject
+            Agregar materia
           </button>
         </div>
+        {subjectWarning ? <p className="subtitle">{subjectWarning}</p> : null}
 
         <div className="grid grid-2">
           <input
             className="input"
-            placeholder="Class label"
+            placeholder="Nombre de la clase"
             value={slotLabel}
-            onChange={(event) => setSlotLabel(event.target.value)}
+            onChange={(event) => {
+              setSlotLabel(event.target.value);
+              setSlotWarning("");
+            }}
           />
           <select className="select" value={slotDay} onChange={(event) => setSlotDay(event.target.value)}>
             {days.map((day) => (
@@ -112,33 +132,34 @@ export const SemesterManager = () => {
           <input className="input" type="time" value={slotStart} onChange={(event) => setSlotStart(event.target.value)} />
           <input className="input" type="time" value={slotEnd} onChange={(event) => setSlotEnd(event.target.value)} />
           <button className="button secondary" type="button" onClick={addSlot}>
-            Add Schedule Slot
+            Agregar horario
           </button>
         </div>
+        {slotWarning ? <p className="subtitle">{slotWarning}</p> : null}
       </div>
 
       <div className="grid grid-2" style={{ marginTop: 16 }}>
         <div>
-          <p className="subtitle">Subjects</p>
+          <p className="subtitle">Materias</p>
           <div className="grid">
             {state.subjects.map((subject) => (
               <div key={subject.id} className="badge">
                 {subject.code} · {subject.name} ({subject.credits})
                 <button className="button secondary" type="button" onClick={() => removeSubject(subject.id)}>
-                  Remove
+                  Quitar
                 </button>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <p className="subtitle">Schedule</p>
+          <p className="subtitle">Horario</p>
           <div className="grid">
             {state.schedule.map((slot) => (
               <div key={slot.id} className="badge">
                 {slot.day} · {slot.label} ({slot.start}-{slot.end})
                 <button className="button secondary" type="button" onClick={() => removeSlot(slot.id)}>
-                  Remove
+                  Quitar
                 </button>
               </div>
             ))}
