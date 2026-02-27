@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { ErrorBoundary } from "@/src/components/ErrorBoundary";
 import { useDisciplineState } from "@/src/components/StateProvider";
 import { BottomNav } from "@/src/components/BottomNav";
 import { LoadingOverlay } from "@/src/components/LoadingOverlay";
@@ -25,7 +26,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="app-shell">
       {loading ? <LoadingOverlay /> : null}
-      {children}
+      <ErrorBoundary>{children}</ErrorBoundary>
       <BottomNav />
     </div>
   );
