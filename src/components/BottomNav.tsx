@@ -14,15 +14,17 @@ export const BottomNav = () => {
 
   return (
     <nav className="bottom-nav">
-      {NAV_ITEMS.map((item) => {
-        const active = pathname === item.href;
-        return (
-          <Link key={item.href} href={item.href} className={active ? "active" : ""}>
-            <span className="nav-icon">{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
+      <div className="dock">
+        {NAV_ITEMS.map((item) => {
+          const active = pathname === item.href;
+          return (
+            <Link key={item.href} href={item.href} className={`dock-item ${active ? "active" : ""}`}>
+              <span className="nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 };

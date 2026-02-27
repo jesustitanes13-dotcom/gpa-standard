@@ -90,7 +90,7 @@ export const GpaSimulator = () => {
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>
-        <div className="pill">What-if</div>
+        <div className="pill">Escenario</div>
         <p className="subtitle">
           Si saco una A en mi proximo examen, mi GPA sube a {whatIfGpa.toFixed(2)}.
         </p>

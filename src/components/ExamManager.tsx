@@ -11,13 +11,10 @@ export const ExamManager = () => {
   const [date, setDate] = useState("");
   const [weight, setWeight] = useState(25);
   const [warning, setWarning] = useState("");
+  const blockSave = title.trim().length > 0 && isLikelySpanish(title);
 
   const addExam = () => {
-    if (!subjectId || !date) return;
-    if (isLikelySpanish(title)) {
-      setWarning("Senior Partner: You must write in English to save.");
-      return;
-    }
+    if (!subjectId || !date || blockSave) return;
     const newExam = {
       id: `exam-${Date.now()}`,
       subjectId,
@@ -68,7 +65,7 @@ export const ExamManager = () => {
           value={weight}
           onChange={(event) => setWeight(Number(event.target.value))}
         />
-        <button className="button" type="button" onClick={addExam}>
+        <button className="button" type="button" onClick={addExam} disabled={blockSave}>
           Agregar examen
         </button>
       </div>
@@ -85,7 +82,11 @@ export const ExamManager = () => {
           );
         })}
       </div>
-      {warning ? <p className="subtitle">{warning}</p> : null}
+      {blockSave ? (
+        <p className="subtitle">Solo se permite ingles para mantener la disciplina academica.</p>
+      ) : warning ? (
+        <p className="subtitle">{warning}</p>
+      ) : null}
     </div>
   );
 };

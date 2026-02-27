@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 import { useDisciplineState } from "@/src/components/StateProvider";
 import { BottomNav } from "@/src/components/BottomNav";
+import { LoadingOverlay } from "@/src/components/LoadingOverlay";
 
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
-  const { state } = useDisciplineState();
+  const { state, loading } = useDisciplineState();
 
   useEffect(() => {
     const className = "exam-mode";
@@ -23,6 +24,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="app-shell">
+      {loading ? <LoadingOverlay /> : null}
       {children}
       <BottomNav />
     </div>

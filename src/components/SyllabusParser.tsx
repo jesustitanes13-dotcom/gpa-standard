@@ -23,13 +23,10 @@ export const SyllabusParser = () => {
   const [rawText, setRawText] = useState("");
   const [rules, setRules] = useState<ParsedRule[]>([]);
   const [warning, setWarning] = useState("");
+  const blockSave = rawText.trim().length > 0 && isLikelySpanish(rawText);
 
   const handleParse = () => {
-    if (!rawText.trim()) return;
-    if (isLikelySpanish(rawText)) {
-      setWarning("Senior Partner: You must write in English to save.");
-      return;
-    }
+    if (!rawText.trim() || blockSave) return;
     setRules(parseRules(rawText));
     setWarning("");
   };
@@ -50,7 +47,7 @@ export const SyllabusParser = () => {
         }}
       />
       <div className="button-row" style={{ marginTop: 12 }}>
-        <button className="button" type="button" onClick={handleParse}>
+        <button className="button" type="button" onClick={handleParse} disabled={blockSave}>
           Analizar
         </button>
       </div>
@@ -63,7 +60,11 @@ export const SyllabusParser = () => {
           ))}
         </div>
       )}
-      {warning ? <p className="subtitle">{warning}</p> : null}
+      {blockSave ? (
+        <p className="subtitle">Solo se permite ingles para mantener la disciplina academica.</p>
+      ) : warning ? (
+        <p className="subtitle">{warning}</p>
+      ) : null}
     </div>
   );
 };

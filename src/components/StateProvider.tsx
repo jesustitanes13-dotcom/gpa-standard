@@ -9,6 +9,7 @@ type StateContextValue = {
   state: DisciplineState;
   setState: React.Dispatch<React.SetStateAction<DisciplineState>>;
   updateState: (partial: Partial<DisciplineState>) => void;
+  loading: boolean;
 };
 
 const StateContext = createContext<StateContextValue | undefined>(undefined);
@@ -19,28 +20,38 @@ const OWNER_ID = process.env.NEXT_PUBLIC_DISCIPLINE_OS_OWNER_ID ?? "default";
 export const StateProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, setState] = useState<DisciplineState>(defaultState);
   const [hydrated, setHydrated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const lastSynced = useRef<string>("");
+  const applyingRemote = useRef(false);
 
   useEffect(() => {
-    const cached = typeof window !== "undefined" ? localStorage.getItem(LOCAL_KEY) : null;
-    if (cached) {
-      try {
-        setState(JSON.parse(cached) as DisciplineState);
-      } catch {
-        // ignore cache parse issues
+    try {
+      const cached = typeof window !== "undefined" ? localStorage.getItem(LOCAL_KEY) : null;
+      if (cached) {
+        try {
+          setState(JSON.parse(cached) as DisciplineState);
+        } catch {
+          // ignore cache parse issues
+        }
       }
+    } catch {
+      // ignore storage issues
     }
 
     fetch("/api/state")
       .then((res) => (res.ok ? res.json() : null))
       .then((payload) => {
         if (payload?.state) {
+          applyingRemote.current = true;
           setState(payload.state as DisciplineState);
           lastSynced.current = JSON.stringify(payload.state);
         }
       })
       .catch(() => null)
-      .finally(() => setHydrated(true));
+      .finally(() => {
+        setHydrated(true);
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -48,7 +59,17 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
+    try {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
+    } catch {
+      // ignore storage issues
+    }
+    if (applyingRemote.current) {
+      applyingRemote.current = false;
+      lastSynced.current = JSON.stringify(state);
+      return;
+    }
+
     lastSynced.current = JSON.stringify(state);
     const timeout = window.setTimeout(() => {
       fetch("/api/state", {
@@ -81,6 +102,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
           if (!nextState) return;
           const serialized = JSON.stringify(nextState);
           if (serialized === lastSynced.current) return;
+          applyingRemote.current = true;
           lastSynced.current = serialized;
           setState(nextState);
         }
@@ -103,9 +125,10 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       state,
       setState,
-      updateState
+      updateState,
+      loading
     }),
-    [state, updateState]
+    [state, updateState, loading]
   );
 
   return <StateContext.Provider value={value}>{children}</StateContext.Provider>;

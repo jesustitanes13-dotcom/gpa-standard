@@ -10,15 +10,16 @@ export const SeniorPartnerBubble = () => {
       {open ? (
         <div className="senior-partner-panel card">
           <div className="pill">Senior Partner</div>
-          <h3 className="title">Asistente Estrategico</h3>
-          <p className="subtitle">Estoy aqui para vigilar tus fechas limite y disciplina.</p>
+          <h3 className="title">IA Estrategica</h3>
+          <p className="subtitle">Estoy activo para monitorear tus fechas limite y tu enfoque.</p>
           <button className="button secondary" type="button" onClick={() => setOpen(false)}>
             Cerrar
           </button>
         </div>
       ) : null}
       <button className="senior-partner-bubble" type="button" onClick={() => setOpen((prev) => !prev)}>
-        SP
+        <span className="ai-core" />
+        <span className="ai-eye" />
       </button>
     </div>
   );

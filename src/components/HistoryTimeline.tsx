@@ -8,13 +8,10 @@ export const HistoryTimeline = () => {
   const { state, setState } = useDisciplineState();
   const [entry, setEntry] = useState("");
   const [warning, setWarning] = useState("");
+  const blockSave = entry.trim().length > 0 && isLikelySpanish(entry);
 
   const addEntry = () => {
-    if (!entry.trim()) return;
-    if (isLikelySpanish(entry)) {
-      setWarning("Senior Partner: You must write in English to save.");
-      return;
-    }
+    if (!entry.trim() || blockSave) return;
     setState((prev) => ({
       ...prev,
       historyLog: [entry.trim(), ...prev.historyLog]
@@ -37,11 +34,15 @@ export const HistoryTimeline = () => {
             setWarning("");
           }}
         />
-        <button className="button" type="button" onClick={addEntry}>
+        <button className="button" type="button" onClick={addEntry} disabled={blockSave}>
           Guardar entrada
         </button>
       </div>
-      {warning ? <p className="subtitle">{warning}</p> : null}
+      {blockSave ? (
+        <p className="subtitle">Solo se permite ingles para mantener la disciplina academica.</p>
+      ) : warning ? (
+        <p className="subtitle">{warning}</p>
+      ) : null}
       <div className="grid" style={{ marginTop: 16 }}>
         {state.historyLog.map((log, index) => (
           <div key={`${log}-${index}`} className="badge">

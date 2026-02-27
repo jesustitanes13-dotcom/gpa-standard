@@ -17,13 +17,11 @@ export const SemesterManager = () => {
   const [slotEnd, setSlotEnd] = useState("09:00");
   const [subjectWarning, setSubjectWarning] = useState("");
   const [slotWarning, setSlotWarning] = useState("");
+  const blockSubject = subjectName.trim().length > 0 && isLikelySpanish(subjectName);
+  const blockSlot = slotLabel.trim().length > 0 && isLikelySpanish(slotLabel);
 
   const addSubject = () => {
-    if (!subjectName.trim()) return;
-    if (isLikelySpanish(subjectName)) {
-      setSubjectWarning("Senior Partner: You must write in English to save.");
-      return;
-    }
+    if (!subjectName.trim() || blockSubject) return;
     const newSubject = {
       id: `sub-${Date.now()}`,
       name: subjectName.trim(),
@@ -49,11 +47,7 @@ export const SemesterManager = () => {
   };
 
   const addSlot = () => {
-    if (!slotLabel.trim()) return;
-    if (isLikelySpanish(slotLabel)) {
-      setSlotWarning("Senior Partner: You must write in English to save.");
-      return;
-    }
+    if (!slotLabel.trim() || blockSlot) return;
     const newSlot = {
       id: `slot-${Date.now()}`,
       day: slotDay,
@@ -106,11 +100,15 @@ export const SemesterManager = () => {
             value={credits}
             onChange={(event) => setCredits(Number(event.target.value))}
           />
-          <button className="button" type="button" onClick={addSubject}>
+          <button className="button" type="button" onClick={addSubject} disabled={blockSubject}>
             Agregar materia
           </button>
         </div>
-        {subjectWarning ? <p className="subtitle">{subjectWarning}</p> : null}
+        {blockSubject ? (
+          <p className="subtitle">Solo se permite ingles para mantener la disciplina academica.</p>
+        ) : subjectWarning ? (
+          <p className="subtitle">{subjectWarning}</p>
+        ) : null}
 
         <div className="grid grid-2">
           <input
@@ -131,11 +129,15 @@ export const SemesterManager = () => {
           </select>
           <input className="input" type="time" value={slotStart} onChange={(event) => setSlotStart(event.target.value)} />
           <input className="input" type="time" value={slotEnd} onChange={(event) => setSlotEnd(event.target.value)} />
-          <button className="button secondary" type="button" onClick={addSlot}>
+          <button className="button secondary" type="button" onClick={addSlot} disabled={blockSlot}>
             Agregar horario
           </button>
         </div>
-        {slotWarning ? <p className="subtitle">{slotWarning}</p> : null}
+        {blockSlot ? (
+          <p className="subtitle">Solo se permite ingles para mantener la disciplina academica.</p>
+        ) : slotWarning ? (
+          <p className="subtitle">{slotWarning}</p>
+        ) : null}
       </div>
 
       <div className="grid grid-2" style={{ marginTop: 16 }}>
