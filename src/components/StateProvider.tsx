@@ -74,7 +74,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
         }
       })
       .catch(() => null)
-      .finally(() => {
+      .then(() => {
         setHydrated(true);
         setLoading(false);
       });
@@ -101,7 +101,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
           lastSynced.current = JSON.stringify(data.state);
         }
       })
-      .finally(() => {
+      .then(() => {
         setHydrated(true);
         setLoading(false);
       });
