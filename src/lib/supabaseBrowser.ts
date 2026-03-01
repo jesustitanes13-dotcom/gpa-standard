@@ -11,8 +11,20 @@ export const getSupabaseBrowser = () => {
     return null;
   }
 
+  try {
+    const parsed = new URL(supabaseUrl);
+    if (!parsed.protocol.startsWith("http")) {
+      throw new Error("Invalid protocol");
+    }
+  } catch {
+    if (typeof window !== "undefined") {
+      console.log("Supabase invalid URL", { supabaseUrl });
+    }
+    return null;
+  }
+
   if (typeof window !== "undefined") {
-    console.log("Supabase client init ok", { supabaseUrlPresent: !!supabaseUrl, anonKeyPresent: !!anonKey });
+    console.log("Supabase client init ok", { supabaseUrlPresent: true, anonKeyPresent: true });
   }
 
   return createClient(supabaseUrl, anonKey);

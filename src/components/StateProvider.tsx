@@ -18,13 +18,14 @@ const LOCAL_KEY = "discipline_os_state";
 const OWNER_ID = process.env.NEXT_PUBLIC_DISCIPLINE_OS_OWNER_ID ?? "default";
 
 export const StateProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, setState] = useState<DisciplineState>(defaultState);
+  const [state, setState] = useState<DisciplineState | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
   const lastSynced = useRef<string>("");
   const applyingRemote = useRef(false);
 
   useEffect(() => {
+    setState(defaultState);
     try {
       const cached = typeof window !== "undefined" ? localStorage.getItem(LOCAL_KEY) : null;
       if (cached) {
@@ -55,7 +56,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!hydrated) {
+    if (!hydrated || !state) {
       return;
     }
 
@@ -114,21 +115,31 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [hydrated]);
 
+  const setStateSafe = useCallback(
+    (value: React.SetStateAction<DisciplineState>) => {
+      setState((prev) => {
+        const base = prev ?? defaultState;
+        return typeof value === "function" ? (value as (p: DisciplineState) => DisciplineState)(base) : value;
+      });
+    },
+    []
+  );
+
   const updateState = useCallback((partial: Partial<DisciplineState>) => {
     setState((prev) => ({
-      ...prev,
+      ...(prev ?? defaultState),
       ...partial
     }));
   }, []);
 
   const value = useMemo(
     () => ({
-      state,
-      setState,
+      state: state ?? defaultState,
+      setState: setStateSafe,
       updateState,
       loading
     }),
-    [state, updateState, loading]
+    [state, setStateSafe, updateState, loading]
   );
 
   return <StateContext.Provider value={value}>{children}</StateContext.Provider>;
