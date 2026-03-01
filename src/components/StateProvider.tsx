@@ -127,13 +127,18 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     const timeout = window.setTimeout(() => {
       const supabase = getSupabaseBrowser();
       if (supabase && user) {
-        supabase
-          .from("discipline_os_state")
-          .upsert(
-            { owner_id: user.id, state, updated_at: new Date().toISOString() },
-            { onConflict: "owner_id" }
-          )
-          .catch(() => null);
+        void (async () => {
+          try {
+            await supabase
+              .from("discipline_os_state")
+              .upsert(
+                { owner_id: user.id, state, updated_at: new Date().toISOString() },
+                { onConflict: "owner_id" }
+              );
+          } catch {
+            // ignore sync errors
+          }
+        })();
         return;
       }
 
