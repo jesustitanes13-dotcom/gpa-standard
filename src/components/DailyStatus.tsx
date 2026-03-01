@@ -9,7 +9,7 @@ const daysBetween = (start: Date, end: Date) => {
 };
 
 export const DailyStatus = () => {
-  const { state } = useDisciplineState();
+  const { state, examWarning } = useDisciplineState();
 
   const countdown = useMemo(() => {
     const graduation = new Date(state.graduationDate);
@@ -17,8 +17,8 @@ export const DailyStatus = () => {
   }, [state.graduationDate]);
 
   return (
-    <div className="card glow-active">
-      <div className="pill">Mision Central</div>
+    <div className={`card glow-active ${examWarning ? "warning-glow" : ""}`}>
+      <div className="pill">Dashboard</div>
       <h1 className="title">Epa, {state.greetingName}!</h1>
       <p className="subtitle">Cuenta regresiva a graduacion: {countdown} dias</p>
     </div>

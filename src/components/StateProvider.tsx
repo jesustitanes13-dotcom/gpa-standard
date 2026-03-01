@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { User } from "@supabase/supabase-js";
 import { defaultState } from "@/src/lib/defaultState";
 import { DisciplineState } from "@/src/lib/types";
 import { getSupabaseBrowser } from "@/src/lib/supabaseBrowser";
@@ -10,19 +11,23 @@ type StateContextValue = {
   setState: React.Dispatch<React.SetStateAction<DisciplineState>>;
   updateState: (partial: Partial<DisciplineState>) => void;
   loading: boolean;
+  user: User | null;
+  examWarning: boolean;
 };
 
 const StateContext = createContext<StateContextValue | undefined>(undefined);
 
 const LOCAL_KEY = "discipline_os_state";
-const OWNER_ID = process.env.NEXT_PUBLIC_DISCIPLINE_OS_OWNER_ID ?? "default";
+const FALLBACK_OWNER = process.env.NEXT_PUBLIC_DISCIPLINE_OS_OWNER_ID ?? "default";
 
 export const StateProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, setState] = useState<DisciplineState | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
   const lastSynced = useRef<string>("");
   const applyingRemote = useRef(false);
+  const ownerIdRef = useRef<string>(FALLBACK_OWNER);
 
   useEffect(() => {
     setState(defaultState);
@@ -39,6 +44,26 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
       // ignore storage issues
     }
 
+    const supabase = getSupabaseBrowser();
+    let authCleanup: (() => void) | undefined;
+    if (supabase) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session?.user) {
+          setUser(data.session.user);
+          ownerIdRef.current = data.session.user.id;
+        }
+      });
+
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+        ownerIdRef.current = session?.user?.id ?? FALLBACK_OWNER;
+      });
+
+      authCleanup = () => {
+        authListener?.subscription.unsubscribe();
+      };
+    }
+
     fetch("/api/state")
       .then((res) => (res.ok ? res.json() : null))
       .then((payload) => {
@@ -53,7 +78,34 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
         setHydrated(true);
         setLoading(false);
       });
+
+    return () => {
+      authCleanup?.();
+    };
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const supabase = getSupabaseBrowser();
+    if (!supabase) return;
+
+    supabase
+      .from("discipline_os_state")
+      .select("state")
+      .eq("owner_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.state) {
+          applyingRemote.current = true;
+          setState(data.state as DisciplineState);
+          lastSynced.current = JSON.stringify(data.state);
+        }
+      })
+      .finally(() => {
+        setHydrated(true);
+        setLoading(false);
+      });
+  }, [user]);
 
   useEffect(() => {
     if (!hydrated || !state) {
@@ -73,6 +125,18 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
 
     lastSynced.current = JSON.stringify(state);
     const timeout = window.setTimeout(() => {
+      const supabase = getSupabaseBrowser();
+      if (supabase && user) {
+        supabase
+          .from("discipline_os_state")
+          .upsert(
+            { owner_id: user.id, state, updated_at: new Date().toISOString() },
+            { onConflict: "owner_id" }
+          )
+          .catch(() => null);
+        return;
+      }
+
       fetch("/api/state", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,18 +149,23 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!hydrated) return;
-    const supabase = getSupabaseBrowser();
+    let supabase: ReturnType<typeof getSupabaseBrowser> | null = null;
+    try {
+      supabase = getSupabaseBrowser();
+    } catch {
+      supabase = null;
+    }
     if (!supabase) return;
 
     const channel = supabase
-      .channel(`discipline_os_state:${OWNER_ID}`)
+      .channel(`discipline_os_state:${ownerIdRef.current}`)
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
           table: "discipline_os_state",
-          filter: `owner_id=eq.${OWNER_ID}`
+          filter: `owner_id=eq.${ownerIdRef.current}`
         },
         (payload) => {
           const nextState = (payload.new as { state?: DisciplineState } | null)?.state;
@@ -113,7 +182,7 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [hydrated]);
+  }, [hydrated, user?.id]);
 
   const setStateSafe = useCallback(
     (value: React.SetStateAction<DisciplineState>) => {
@@ -132,14 +201,26 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     }));
   }, []);
 
+  const examWarning = useMemo(() => {
+    const now = new Date();
+    const exams = (state ?? defaultState).exams;
+    return exams.some((exam) => {
+      const diff = new Date(exam.date).getTime() - now.getTime();
+      const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      return days >= 0 && days <= 3;
+    });
+  }, [state]);
+
   const value = useMemo(
     () => ({
       state: state ?? defaultState,
       setState: setStateSafe,
       updateState,
-      loading
+      loading,
+      user,
+      examWarning
     }),
-    [state, setStateSafe, updateState, loading]
+    [state, setStateSafe, updateState, loading, user, examWarning]
   );
 
   return <StateContext.Provider value={value}>{children}</StateContext.Provider>;

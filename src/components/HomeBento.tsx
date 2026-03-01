@@ -30,22 +30,22 @@ export const HomeBento = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="bento-hero">
+            <div className="bento-hero bento-cell">
               <SkeletonCard />
             </div>
-            <div className="bento-streak">
+            <div className="bento-streak bento-cell">
               <SkeletonCard />
             </div>
-            <div className="bento-now">
+            <div className="bento-now bento-cell">
               <SkeletonCard />
             </div>
-            <div className="bento-partner">
+            <div className="bento-partner bento-cell">
               <SkeletonCard />
             </div>
-            <div className="bento-exam">
+            <div className="bento-exam bento-cell">
               <SkeletonCard />
             </div>
-            <div className="bento-proctor">
+            <div className="bento-proctor bento-cell">
               <SkeletonCard />
             </div>
           </motion.div>
@@ -57,22 +57,30 @@ export const HomeBento = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div className="bento-hero" {...cardMotion}>
+            <motion.div className="bento-hero bento-cell" {...cardMotion}>
               <DailyStatus />
             </motion.div>
-            <motion.div className="bento-streak" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.05 }}>
+            <motion.div
+              className="bento-streak bento-cell"
+              {...cardMotion}
+              transition={{ ...cardMotion.transition, delay: 0.05 }}
+            >
               <StreakFlame />
             </motion.div>
-            <motion.div className="bento-now" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.1 }}>
+            <motion.div className="bento-now bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.1 }}>
               <RightNowWidget />
             </motion.div>
-            <motion.div className="bento-partner" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.15 }}>
+            <motion.div
+              className="bento-partner bento-cell"
+              {...cardMotion}
+              transition={{ ...cardMotion.transition, delay: 0.15 }}
+            >
               <SeniorPartnerDashboard />
             </motion.div>
-            <motion.div className="bento-exam" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.2 }}>
+            <motion.div className="bento-exam bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.2 }}>
               <ExamModeToggle />
             </motion.div>
-            <motion.div className="bento-proctor" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.25 }}>
+            <motion.div className="bento-proctor bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.25 }}>
               <ProctorConsole />
             </motion.div>
           </motion.div>

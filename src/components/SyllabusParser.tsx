@@ -33,8 +33,8 @@ export const SyllabusParser = () => {
 
   return (
     <div className="card">
-      <div className="pill">Parser de Silabo</div>
-      <h3 className="title">Extractor de Pesos</h3>
+      <div className="pill">Syllabus</div>
+      <h3 className="title">Syllabus Parser</h3>
       <p className="subtitle">Pega el plan de evaluacion. El parser extrae pesos para el GPA.</p>
       <textarea
         className="textarea"

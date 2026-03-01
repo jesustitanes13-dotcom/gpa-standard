@@ -7,7 +7,7 @@ export const StreakFlame = () => {
 
   return (
     <div className="card glow-active">
-      <div className="pill">Racha</div>
+      <div className="pill">Streak</div>
       <h3 className="title">Fuego de Disciplina</h3>
       <div className="grid grid-2">
         <div>

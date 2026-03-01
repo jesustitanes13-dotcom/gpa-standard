@@ -33,8 +33,8 @@ export const ProctorConsole = () => {
 
   return (
     <div className="card">
-      <div className="pill">Ajustes</div>
-      <h3 className="title">Bot Proctor</h3>
+      <div className="pill">Senior Partner</div>
+      <h3 className="title">Notifications</h3>
       <p className="subtitle">Prueba los correos de alerta del Senior Partner.</p>
       <div className="grid">
         <input

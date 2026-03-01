@@ -22,7 +22,7 @@ export const WorksContent = () => {
     <>
       <motion.div {...cardMotion}>
         <div className="card">
-          <div className="pill">Motor GPA</div>
+          <div className="pill">GPA Tracker</div>
           <h1 className="title">Trabajo</h1>
           <p className="subtitle">Controla el semestre, parsea reglas y simula el GPA en tiempo real.</p>
         </div>

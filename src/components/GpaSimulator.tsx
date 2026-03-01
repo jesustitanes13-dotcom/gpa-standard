@@ -61,8 +61,8 @@ export const GpaSimulator = () => {
 
   return (
     <div className="card">
-      <div className="pill">GPA</div>
-      <h3 className="title">Panel de GPA</h3>
+      <div className="pill">GPA Tracker</div>
+      <h3 className="title">GPA Tracker</h3>
       <p className="subtitle">Visualiza tu progreso hacia la meta y simula el proximo examen.</p>
 
       <div className="grid grid-2" style={{ alignItems: "center" }}>

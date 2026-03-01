@@ -7,7 +7,7 @@ export const ExamModeToggle = () => {
 
   return (
     <div className={`card ${state.examMode ? "exam-glow" : ""}`}>
-      <div className="pill">Modo Examen</div>
+      <div className="pill">Exam Mode</div>
       <h3 className="title">Protocolo de Enfoque</h3>
       <p className="subtitle">
         Al activar, la interfaz entra en prioridad y filtra lo urgente.

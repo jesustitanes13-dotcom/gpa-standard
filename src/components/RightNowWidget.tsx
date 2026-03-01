@@ -35,7 +35,7 @@ export const RightNowWidget = () => {
 
   return (
     <div className="card glow-active">
-      <div className="pill">Ahora</div>
+      <div className="pill">Right Now</div>
       <h3 className="title">{todayName}</h3>
       {current ? (
         <>
