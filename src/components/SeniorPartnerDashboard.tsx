@@ -47,7 +47,7 @@ export const SeniorPartnerDashboard = () => {
     }).catch(() => null);
 
     localStorage.setItem(key, String(now));
-  }, [urgentExams, warning]);
+  }, [urgentDeadlines, warning]);
 
   return (
     <div className={`card ${warning ? "warning-glow" : ""}`}>
