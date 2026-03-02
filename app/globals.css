@@ -107,38 +107,48 @@ main {
 .bento-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   grid-auto-rows: minmax(140px, auto);
 }
 
 .bento-hero {
-  grid-column: span 6;
+  grid-column: span 12;
   aspect-ratio: 16 / 9;
 }
 
 .bento-streak {
-  grid-column: span 3;
+  grid-column: span 5;
   aspect-ratio: 4 / 3;
 }
 
 .bento-now {
-  grid-column: span 3;
+  grid-column: span 5;
   aspect-ratio: 4 / 3;
 }
 
 .bento-partner {
-  grid-column: span 4;
+  grid-column: span 7;
   aspect-ratio: 16 / 10;
 }
 
 .bento-exam {
-  grid-column: span 2;
+  grid-column: span 5;
   aspect-ratio: 4 / 3;
 }
 
 .bento-proctor {
-  grid-column: span 6;
+  grid-column: span 12;
   aspect-ratio: 21 / 9;
+}
+
+.bento-gpa {
+  grid-column: span 7;
+  aspect-ratio: 16 / 9;
+}
+
+.bento-syllabus {
+  grid-column: span 7;
+  aspect-ratio: 16 / 9;
 }
 
 .bento-grid > * {
@@ -150,20 +160,6 @@ main {
   height: 100%;
 }
 
-.bento-hero {
-  min-height: 170px;
-}
-
-.bento-streak,
-.bento-now {
-  min-height: 180px;
-}
-
-.bento-partner,
-.bento-exam,
-.bento-proctor {
-  min-height: 200px;
-}
 
 @media (max-width: 720px) {
   .bento-grid {
@@ -171,6 +167,8 @@ main {
   }
 
   .bento-hero,
+  .bento-gpa,
+  .bento-syllabus,
   .bento-streak,
   .bento-now,
   .bento-partner,

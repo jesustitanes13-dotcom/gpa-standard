@@ -28,6 +28,28 @@ export type Exam = {
   weight: number;
 };
 
+export type SyllabusWeight = {
+  label: string;
+  weight: number;
+};
+
+export type SyllabusDeadline = {
+  title: string;
+  date: string;
+  kind: "exam" | "project" | "quiz" | "other";
+};
+
+export type SyllabusData = {
+  rawText: string;
+  weights: SyllabusWeight[];
+  deadlines: SyllabusDeadline[];
+};
+
+export type GpaHistoryEntry = {
+  term: string;
+  gpa: number;
+};
+
 export type DisciplineState = {
   greetingName: string;
   graduationDate: string;
@@ -38,4 +60,6 @@ export type DisciplineState = {
   exams: Exam[];
   gpaTarget: number;
   historyLog: string[];
+  syllabus: SyllabusData;
+  gpaHistory: GpaHistoryEntry[];
 };

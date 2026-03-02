@@ -64,20 +64,24 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
       };
     }
 
-    fetch("/api/state")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((payload) => {
+    const loadInitialState = async () => {
+      try {
+        const res = await fetch("/api/state");
+        const payload = res.ok ? await res.json() : null;
         if (payload?.state) {
           applyingRemote.current = true;
           setState(payload.state as DisciplineState);
           lastSynced.current = JSON.stringify(payload.state);
         }
-      })
-      .catch(() => null)
-      .then(() => {
+      } catch {
+        // ignore
+      } finally {
         setHydrated(true);
         setLoading(false);
-      });
+      }
+    };
+
+    void loadInitialState();
 
     return () => {
       authCleanup?.();
@@ -89,22 +93,25 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
     const supabase = getSupabaseBrowser();
     if (!supabase) return;
 
-    supabase
-      .from("discipline_os_state")
-      .select("state")
-      .eq("owner_id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
+    const loadUserState = async () => {
+      try {
+        const { data } = await supabase
+          .from("discipline_os_state")
+          .select("state")
+          .eq("owner_id", user.id)
+          .maybeSingle();
         if (data?.state) {
           applyingRemote.current = true;
           setState(data.state as DisciplineState);
           lastSynced.current = JSON.stringify(data.state);
         }
-      })
-      .then(() => {
+      } finally {
         setHydrated(true);
         setLoading(false);
-      });
+      }
+    };
+
+    void loadUserState();
   }, [user]);
 
   useEffect(() => {
@@ -208,9 +215,13 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
 
   const examWarning = useMemo(() => {
     const now = new Date();
-    const exams = (state ?? defaultState).exams;
-    return exams.some((exam) => {
-      const diff = new Date(exam.date).getTime() - now.getTime();
+    const base = state ?? defaultState;
+    const deadlines = [
+      ...base.exams.map((exam) => ({ date: exam.date })),
+      ...base.syllabus.deadlines.map((deadline) => ({ date: deadline.date }))
+    ];
+    return deadlines.some((item) => {
+      const diff = new Date(item.date).getTime() - now.getTime();
       const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
       return days >= 0 && days <= 3;
     });

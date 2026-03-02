@@ -11,16 +11,22 @@ const daysUntil = (date: string) => {
 export const SeniorPartnerDashboard = () => {
   const { state, user } = useDisciplineState();
 
-  const urgentExams = useMemo(
-    () =>
-      state.exams.filter((exam) => {
-        const days = daysUntil(exam.date);
-        return days >= 0 && days <= 3;
-      }),
-    [state.exams]
-  );
+  const urgentDeadlines = useMemo(() => {
+    const examItems = state.exams.map((exam) => ({
+      title: exam.title,
+      date: exam.date
+    }));
+    const syllabusItems = state.syllabus.deadlines.map((deadline) => ({
+      title: deadline.title,
+      date: deadline.date
+    }));
+    return [...examItems, ...syllabusItems].filter((item) => {
+      const days = daysUntil(item.date);
+      return days >= 0 && days <= 3;
+    });
+  }, [state.exams, state.syllabus.deadlines]);
 
-  const warning = urgentExams.length > 0;
+  const warning = urgentDeadlines.length > 0;
 
   useEffect(() => {
     if (!warning) return;
@@ -36,10 +42,7 @@ export const SeniorPartnerDashboard = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: user?.email,
-        deadlines: urgentExams.map((exam) => ({
-          title: exam.title,
-          date: exam.date
-        }))
+        deadlines: urgentDeadlines
       })
     }).catch(() => null);
 
@@ -53,7 +56,7 @@ export const SeniorPartnerDashboard = () => {
       <p className="subtitle">
         Mantén el impulso medible. Optimiza bloques de estudio alineando tareas cognitivas con tus picos de energia.
       </p>
-      {warning ? <p className="subtitle">Atencion: tienes examenes a menos de 3 dias.</p> : null}
+      {warning ? <p className="subtitle">Atencion: tienes deadlines a menos de 3 dias.</p> : null}
       <div className="grid">
         <div className="badge">Cuantifica resultados: registra minutos enfocados diarios.</div>
         <div className="badge">Apunta a 2 bloques de trabajo profundo antes del mediodia.</div>

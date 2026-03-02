@@ -37,6 +37,7 @@ const Circle = ({ progress }: { progress: number }) => {
 export const GpaSimulator = () => {
   const { state } = useDisciplineState();
   const [currentGpa, setCurrentGpa] = useState(3.45);
+  const [finalScore, setFinalScore] = useState(80);
 
   const totalCredits = useMemo(
     () => state.subjects.reduce((sum, subject) => sum + subject.credits, 0),
@@ -58,6 +59,13 @@ export const GpaSimulator = () => {
   }, [currentGpa, nextExam, state.subjects, totalCredits]);
 
   const progress = clamp(currentGpa / state.gpaTarget, 0, 1);
+  const finalWeight = state.syllabus.weights.find((item) => item.label.toLowerCase().includes("final"))?.weight ?? 30;
+  const finalWeightRatio = clamp(finalWeight / 100, 0, 1);
+  const predictedGpa = clamp(
+    currentGpa * (1 - finalWeightRatio) + (finalScore / 100) * 4 * finalWeightRatio,
+    0,
+    4
+  );
 
   return (
     <div className="card">
@@ -90,10 +98,36 @@ export const GpaSimulator = () => {
       </div>
 
       <div className="card" style={{ marginTop: 16 }}>
-        <div className="pill">Escenario</div>
+        <div className="pill">What-if</div>
         <p className="subtitle">
           Si saco una A en mi proximo examen, mi GPA sube a {whatIfGpa.toFixed(2)}.
         </p>
+        <div className="grid grid-2" style={{ marginTop: 8 }}>
+          <label className="subtitle">Final exam score</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            max={100}
+            value={finalScore}
+            onChange={(event) => setFinalScore(Number(event.target.value))}
+          />
+        </div>
+        <div className="badge" style={{ marginTop: 8 }}>
+          Prediccion final GPA: {predictedGpa.toFixed(2)} (Final {finalWeight}%)
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <div className="pill">GPA History</div>
+        <h4 className="title">2025 - 2029</h4>
+        <div className="grid">
+          {state.gpaHistory.map((entry) => (
+            <div key={entry.term} className="badge">
+              {entry.term} · {entry.gpa.toFixed(2)}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -64,6 +64,26 @@ export const defaultState: DisciplineState = {
     }
   ],
   gpaTarget: 3.9,
+  syllabus: {
+    rawText: "",
+    weights: [
+      { label: "Exams", weight: 40 },
+      { label: "Projects", weight: 30 },
+      { label: "Quizzes", weight: 20 },
+      { label: "Participation", weight: 10 }
+    ],
+    deadlines: []
+  },
+  gpaHistory: [
+    { term: "2025 Fall", gpa: 3.6 },
+    { term: "2026 Spring", gpa: 3.7 },
+    { term: "2026 Fall", gpa: 3.8 },
+    { term: "2027 Spring", gpa: 3.85 },
+    { term: "2027 Fall", gpa: 3.88 },
+    { term: "2028 Spring", gpa: 3.9 },
+    { term: "2028 Fall", gpa: 3.92 },
+    { term: "2029 Spring", gpa: 3.94 }
+  ],
   historyLog: [
     "Bloque de estudio profundo completado.",
     "Racha de gym: 4 dias seguidos."
