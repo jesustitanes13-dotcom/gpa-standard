@@ -20,53 +20,51 @@ export const HomeBento = () => {
   const { loading } = useDisciplineState();
 
   return (
-    <div className="bento-grid">
+    <div className="dashboard">
       <AnimatePresence mode="wait" initial={false}>
         {loading ? (
           <motion.div
             key="skeleton"
-            className="bento-grid"
+            className="dashboard"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="bento-hero bento-cell">
+            <div className="section-grid">
+              <SkeletonCard />
               <SkeletonCard />
             </div>
-            <div className="bento-calendar bento-cell">
+            <div className="section-grid">
+              <SkeletonCard />
               <SkeletonCard />
             </div>
-            <div className="bento-gpa bento-cell">
-              <SkeletonCard />
-            </div>
-            <div className="bento-predictor bento-cell">
-              <SkeletonCard />
-            </div>
-            <div className="bento-syllabus bento-cell">
-              <SkeletonCard />
-            </div>
+            <SkeletonCard />
           </motion.div>
         ) : (
           <motion.div
             key="content"
-            className="bento-grid"
+            className="dashboard"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div className="bento-hero bento-cell" {...cardMotion}>
-              <WelcomeCard />
-            </motion.div>
-            <motion.div className="bento-calendar bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.05 }}>
-              <AcademicCalendar />
-            </motion.div>
-            <motion.div className="bento-gpa bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.1 }}>
-              <GpaGlobalCard />
-            </motion.div>
-            <motion.div className="bento-predictor bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.15 }}>
-              <ClassGradePredictor />
-            </motion.div>
-            <motion.div className="bento-syllabus bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.2 }}>
+            <div className="section-grid">
+              <motion.div {...cardMotion}>
+                <WelcomeCard />
+              </motion.div>
+              <motion.div {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.05 }}>
+                <AcademicCalendar />
+              </motion.div>
+            </div>
+            <div className="section-grid">
+              <motion.div {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.1 }}>
+                <GpaGlobalCard />
+              </motion.div>
+              <motion.div {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.15 }}>
+                <ClassGradePredictor />
+              </motion.div>
+            </div>
+            <motion.div {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.2 }}>
               <SyllabusManager />
             </motion.div>
           </motion.div>
