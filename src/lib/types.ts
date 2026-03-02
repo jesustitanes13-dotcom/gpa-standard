@@ -62,4 +62,7 @@ export type DisciplineState = {
   historyLog: string[];
   syllabus: SyllabusData;
   gpaHistory: GpaHistoryEntry[];
+  overallGpa: number;
+  overallTerm: string;
+  overallYear: string;
 };

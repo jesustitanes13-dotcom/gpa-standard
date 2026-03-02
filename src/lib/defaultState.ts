@@ -84,6 +84,9 @@ export const defaultState: DisciplineState = {
     { term: "2028 Fall", gpa: 3.92 },
     { term: "2029 Spring", gpa: 3.94 }
   ],
+  overallGpa: 3.7,
+  overallTerm: "Spring",
+  overallYear: "2026",
   historyLog: [
     "Bloque de estudio profundo completado.",
     "Racha de gym: 4 dias seguidos."
