@@ -2,13 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { DailyStatus } from "@/src/components/DailyStatus";
-import { ExamModeToggle } from "@/src/components/ExamModeToggle";
-import { GpaSimulator } from "@/src/components/GpaSimulator";
-import { ProctorConsole } from "@/src/components/ProctorConsole";
-import { RightNowWidget } from "@/src/components/RightNowWidget";
-import { SeniorPartnerDashboard } from "@/src/components/SeniorPartnerDashboard";
-import { StreakFlame } from "@/src/components/StreakFlame";
+import { AcademicCalendar } from "@/src/components/AcademicCalendar";
+import { ClassGradePredictor } from "@/src/components/ClassGradePredictor";
+import { GpaGlobalCard } from "@/src/components/GpaGlobalCard";
 import { SyllabusManager } from "@/src/components/SyllabusManager";
+import { WelcomeCard } from "@/src/components/WelcomeCard";
 import { useDisciplineState } from "@/src/components/StateProvider";
 import { SkeletonCard } from "@/src/components/SkeletonCard";
 
@@ -35,25 +33,16 @@ export const HomeBento = () => {
             <div className="bento-hero bento-cell">
               <SkeletonCard />
             </div>
+            <div className="bento-calendar bento-cell">
+              <SkeletonCard />
+            </div>
             <div className="bento-gpa bento-cell">
               <SkeletonCard />
             </div>
-            <div className="bento-streak bento-cell">
+            <div className="bento-predictor bento-cell">
               <SkeletonCard />
             </div>
             <div className="bento-syllabus bento-cell">
-              <SkeletonCard />
-            </div>
-            <div className="bento-now bento-cell">
-              <SkeletonCard />
-            </div>
-            <div className="bento-partner bento-cell">
-              <SkeletonCard />
-            </div>
-            <div className="bento-exam bento-cell">
-              <SkeletonCard />
-            </div>
-            <div className="bento-proctor bento-cell">
               <SkeletonCard />
             </div>
           </motion.div>
@@ -66,36 +55,19 @@ export const HomeBento = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div className="bento-hero bento-cell" {...cardMotion}>
-              <DailyStatus />
+              <WelcomeCard />
             </motion.div>
-            <motion.div className="bento-gpa bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.05 }}>
-              <GpaSimulator />
+            <motion.div className="bento-calendar bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.05 }}>
+              <AcademicCalendar />
             </motion.div>
-            <motion.div
-              className="bento-streak bento-cell"
-              {...cardMotion}
-              transition={{ ...cardMotion.transition, delay: 0.1 }}
-            >
-              <StreakFlame />
+            <motion.div className="bento-gpa bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.1 }}>
+              <GpaGlobalCard />
             </motion.div>
-            <motion.div className="bento-syllabus bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.15 }}>
+            <motion.div className="bento-predictor bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.15 }}>
+              <ClassGradePredictor />
+            </motion.div>
+            <motion.div className="bento-syllabus bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.2 }}>
               <SyllabusManager />
-            </motion.div>
-            <motion.div className="bento-now bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.2 }}>
-              <RightNowWidget />
-            </motion.div>
-            <motion.div
-              className="bento-partner bento-cell"
-              {...cardMotion}
-              transition={{ ...cardMotion.transition, delay: 0.25 }}
-            >
-              <SeniorPartnerDashboard />
-            </motion.div>
-            <motion.div className="bento-exam bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.3 }}>
-              <ExamModeToggle />
-            </motion.div>
-            <motion.div className="bento-proctor bento-cell" {...cardMotion} transition={{ ...cardMotion.transition, delay: 0.35 }}>
-              <ProctorConsole />
             </motion.div>
           </motion.div>
         )}

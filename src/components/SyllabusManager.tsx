@@ -84,7 +84,7 @@ export const SyllabusManager = () => {
   return (
     <div className="card">
       <div className="pill">Syllabus Manager</div>
-      <h3 className="title">Syllabus Intelligent Vault</h3>
+      <h3 className="title">Syllabus Vault</h3>
       <p className="subtitle">Pega o sube tu syllabus. Guardamos pesos y deadlines para el GPA y alertas.</p>
       <div className="grid">
         <textarea

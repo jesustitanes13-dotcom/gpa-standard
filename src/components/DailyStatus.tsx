@@ -17,8 +17,7 @@ export const DailyStatus = () => {
   }, [state.graduationDate]);
 
   return (
-    <div className={`card glow-active ${examWarning ? "warning-glow" : ""}`}>
-      <div className="pill">Dashboard</div>
+    <div className={`welcome-inner ${examWarning ? "warning-glow" : ""}`}>
       <h1 className="title">Epa, {state.greetingName}!</h1>
       <p className="subtitle">Cuenta regresiva a graduacion: {countdown} dias</p>
     </div>

@@ -58,6 +58,18 @@ main {
   gap: 8px;
 }
 
+.card .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.welcome-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .card + .card {
   margin-top: 16px;
 }
@@ -106,7 +118,7 @@ main {
 
 .bento-grid {
   display: grid;
-  gap: 16px;
+  gap: 24px;
   grid-template-columns: repeat(12, 1fr);
   grid-auto-rows: minmax(140px, auto);
 }
@@ -116,39 +128,24 @@ main {
   aspect-ratio: 16 / 9;
 }
 
-.bento-streak {
-  grid-column: span 5;
-  aspect-ratio: 4 / 3;
-}
-
-.bento-now {
-  grid-column: span 5;
-  aspect-ratio: 4 / 3;
-}
-
-.bento-partner {
-  grid-column: span 7;
-  aspect-ratio: 16 / 10;
-}
-
-.bento-exam {
-  grid-column: span 5;
-  aspect-ratio: 4 / 3;
-}
-
-.bento-proctor {
+.bento-calendar {
   grid-column: span 12;
-  aspect-ratio: 21 / 9;
+  aspect-ratio: 16 / 9;
 }
 
 .bento-gpa {
-  grid-column: span 7;
+  grid-column: span 6;
+  aspect-ratio: 16 / 9;
+}
+
+.bento-predictor {
+  grid-column: span 6;
   aspect-ratio: 16 / 9;
 }
 
 .bento-syllabus {
-  grid-column: span 7;
-  aspect-ratio: 16 / 9;
+  grid-column: span 12;
+  aspect-ratio: 21 / 9;
 }
 
 .bento-grid > * {
@@ -167,13 +164,10 @@ main {
   }
 
   .bento-hero,
+  .bento-calendar,
   .bento-gpa,
-  .bento-syllabus,
-  .bento-streak,
-  .bento-now,
-  .bento-partner,
-  .bento-exam,
-  .bento-proctor {
+  .bento-predictor,
+  .bento-syllabus {
     grid-column: span 1;
     min-height: auto;
     aspect-ratio: auto;
@@ -251,6 +245,44 @@ main {
   white-space: normal;
   line-height: 1.3;
   backdrop-filter: blur(8px);
+}
+
+.calendar-shell {
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(8, 12, 18, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.calendar-shell .react-calendar {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text);
+}
+
+.calendar-shell .react-calendar__tile {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.calendar-shell .react-calendar__tile:enabled:hover,
+.calendar-shell .react-calendar__tile:enabled:focus {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.calendar-deadline {
+  position: relative;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+.calendar-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--blue-2);
+  border-radius: 999px;
+  margin-top: 4px;
 }
 
 .exam-mode {
